@@ -1,0 +1,53 @@
+name: Aria Agent Fleet
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+  push:
+    branches: [main]
+    paths: [".github/workflows/aria-agent-fleet.yml"]
+
+concurrency:
+  group: aria-agent-fleet-${{ github.repository }}
+  cancel-in-progress: false
+
+env:
+  ARIA_ORCHESTRATOR_URL: https://heasifobzglzrouvnice.supabase.co/functions/v1/aria-orchestrator
+  ARIA_WORKER_URL: https://damien-os.vercel.app/aria-worker.py
+  ARIA_WORKER_SHA256: 8dfa67183ae1bfcc9c9992bf9fb8c317dc3ff4d602fa5d4301edd9ecb7139300
+  GITHUB_TOKEN: ${{ github.token }}
+
+jobs:
+  product:
+    runs-on: ubuntu-latest
+    permissions: {contents: read, issues: write, id-token: write}
+    env: {ARIA_WORKER_ID: product-agent}
+    steps:
+      - run: curl --fail --silent --show-error "$ARIA_WORKER_URL" -o /tmp/aria-worker.py
+      - run: echo "$ARIA_WORKER_SHA256  /tmp/aria-worker.py" | sha256sum --check
+      - run: python /tmp/aria-worker.py
+  builder:
+    runs-on: ubuntu-latest
+    permissions: {contents: write, pull-requests: read, id-token: write}
+    env: {ARIA_WORKER_ID: builder-agent}
+    steps:
+      - run: curl --fail --silent --show-error "$ARIA_WORKER_URL" -o /tmp/aria-worker.py
+      - run: echo "$ARIA_WORKER_SHA256  /tmp/aria-worker.py" | sha256sum --check
+      - run: python /tmp/aria-worker.py
+  quality-security:
+    runs-on: ubuntu-latest
+    permissions: {contents: read, pull-requests: read, issues: write, statuses: read, checks: read, actions: read, id-token: write}
+    env: {ARIA_WORKER_ID: quality-security-agent}
+    steps:
+      - run: curl --fail --silent --show-error "$ARIA_WORKER_URL" -o /tmp/aria-worker.py
+      - run: echo "$ARIA_WORKER_SHA256  /tmp/aria-worker.py" | sha256sum --check
+      - run: python /tmp/aria-worker.py
+  delivery:
+    runs-on: ubuntu-latest
+    permissions: {contents: read, pull-requests: write, statuses: read, checks: read, id-token: write}
+    env: {ARIA_WORKER_ID: delivery-agent}
+    steps:
+      - run: curl --fail --silent --show-error "$ARIA_WORKER_URL" -o /tmp/aria-worker.py
+      - run: echo "$ARIA_WORKER_SHA256  /tmp/aria-worker.py" | sha256sum --check
+      - run: python /tmp/aria-worker.py
