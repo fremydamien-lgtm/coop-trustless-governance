@@ -15,7 +15,7 @@ concurrency:
 env:
   ARIA_ORCHESTRATOR_URL: https://heasifobzglzrouvnice.supabase.co/functions/v1/aria-orchestrator
   ARIA_WORKER_URL: https://damien-os.vercel.app/aria-worker.py
-  ARIA_WORKER_SHA256: 8dfa67183ae1bfcc9c9992bf9fb8c317dc3ff4d602fa5d4301edd9ecb7139300
+  ARIA_WORKER_SHA256: 82ebc18d227db650218605f0c0fb9a3d35a276d1b5abe58a80fc22578a60a7a4
   GITHUB_TOKEN: ${{ github.token }}
 
 jobs:
