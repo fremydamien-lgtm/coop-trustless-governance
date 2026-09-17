@@ -1,12 +1,9 @@
 name: Aria Agent Fleet
 
+# PAUSED: automatic execution disabled to prevent unattended GitHub Actions cost.
+# This workflow can only be started manually until automatic operation is explicitly re-enabled.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/15 * * * *"
-  push:
-    branches: [main]
-    paths: [".github/workflows/aria-agent-fleet.yml"]
 
 concurrency:
   group: aria-agent-fleet-${{ github.repository }}
